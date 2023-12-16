@@ -173,34 +173,22 @@ bool MonoToStereoAudioProcessor::isBusesLayoutSupported (const BusesLayout& layo
 
 void MonoToStereoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-	juce::ScopedNoDenormals noDenormals;
-	auto totalNumInputChannels = getTotalNumInputChannels();
-	auto totalNumOutputChannels = getTotalNumOutputChannels();
+	auto channels = getTotalNumOutputChannels();
+	if (channels < 2)
+		return;
 
-	// In case we have more outputs than inputs, this code clears any output
-	// channels that didn't contain input data, (because these aren't
-	// guaranteed to be empty - they may contain garbage).
-	// This is here to avoid people getting screaming feedback
-	// when they first compile a plugin, but obviously you don't need to keep
-	// this code if your algorithm always overwrites all the output channels.
-	for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-		buffer.clear(i, 0, buffer.getNumSamples());
+	// Parameters
+	float mix = mixParameter->load();
 
-	// This is the place where you'd normally do the guts of your plugin's
-	// audio processing...
-	// Make sure to reset the state if your inner loop is processing
-	// the samples and the outer loop is handling the channels.
-	// Alternatively, you can process the samples with the channels
-	// interleaved by keeping the same state.
-
-	int samples = buffer.getNumSamples();
-	auto* leftChannel = buffer.getWritePointer(0);
-	auto* rightChannel = buffer.getWritePointer(1);
 	float delaySamples = std::max((float)(getSampleRate() * delayParameter->load() * 0.001f), 2.0f);
 
-	float mix = mixParameter->load();
+	// Constants
+	int samples = buffer.getNumSamples();
 	float invertMix = 1.0f - mix;
 
+	auto* leftChannel = buffer.getWritePointer(0);
+	auto* rightChannel = buffer.getWritePointer(1);
+	
 	for (int sample = 0; sample < samples; ++sample)
 	{
 		float delayedSample = m_buffer.ReadDelay(delaySamples);

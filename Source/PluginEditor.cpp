@@ -13,14 +13,22 @@
 MonoToStereoAudioProcessorEditor::MonoToStereoAudioProcessorEditor (MonoToStereoAudioProcessor& p, juce::AudioProcessorValueTreeState& vts)
     : AudioProcessorEditor (&p), audioProcessor (p), valueTreeState(vts)
 {
+	juce::Colour light = juce::Colour::fromHSV(HUE * 0.01f, 0.5f, 0.6f, 1.0f);
+	juce::Colour medium = juce::Colour::fromHSV(HUE * 0.01f, 0.5f, 0.5f, 1.0f);
+	juce::Colour dark = juce::Colour::fromHSV(HUE * 0.01f, 0.5f, 0.4f, 1.0f);
+
+	getLookAndFeel().setColour(juce::Slider::thumbColourId, dark);
+	getLookAndFeel().setColour(juce::Slider::rotarySliderFillColourId, medium);
+	getLookAndFeel().setColour(juce::Slider::rotarySliderOutlineColourId, light);
+
 	// Labels
 	delayLabel.setText("Delay", juce::dontSendNotification);
-	delayLabel.setFont(juce::Font(24.0f, juce::Font::bold));
+	delayLabel.setFont(juce::Font(24.0f * 0.01f * SCALE, juce::Font::bold));
 	delayLabel.setJustificationType(juce::Justification::centred);
 	addAndMakeVisible(delayLabel);
 
 	mixLabel.setText("Mix", juce::dontSendNotification);
-	mixLabel.setFont(juce::Font(24.0f, juce::Font::bold));
+	mixLabel.setFont(juce::Font(24.0f * 0.01f * SCALE, juce::Font::bold));
 	mixLabel.setJustificationType(juce::Justification::centred);
 	addAndMakeVisible(mixLabel);
 
@@ -35,7 +43,7 @@ MonoToStereoAudioProcessorEditor::MonoToStereoAudioProcessorEditor (MonoToStereo
 	addAndMakeVisible(mixSlider);
 	mixSliderAttachment.reset(new SliderAttachment(valueTreeState, "mix", mixSlider));
 
-	setSize(400, 250);
+	setSize((int)(SLIDER_WIDTH * 0.01f * SCALE * N_SLIDERS_COUNT), (int)(SLIDER_WIDTH * 0.01f * SCALE));
 }
 
 MonoToStereoAudioProcessorEditor::~MonoToStereoAudioProcessorEditor()
@@ -45,7 +53,7 @@ MonoToStereoAudioProcessorEditor::~MonoToStereoAudioProcessorEditor()
 //==============================================================================
 void MonoToStereoAudioProcessorEditor::paint (juce::Graphics& g)
 {
-	g.fillAll(juce::Colours::darkslateblue);
+	g.fillAll(juce::Colour::fromHSV(HUE * 0.01f, 0.5f, 0.7f, 1.0f));
 }
 
 void MonoToStereoAudioProcessorEditor::resized()
@@ -64,8 +72,8 @@ void MonoToStereoAudioProcessorEditor::resized()
 	delaySlider.setBounds(left);
 	mixSlider.setBounds(right);
 
-	left.removeFromBottom(20);
-	right.removeFromBottom(20);
+	left.removeFromBottom((int)(LABEL_OFFSET * 0.01f * SCALE));
+	right.removeFromBottom((int)(LABEL_OFFSET * 0.01f * SCALE));
 
 	delayLabel.setBounds(left);
 	mixLabel.setBounds(right);

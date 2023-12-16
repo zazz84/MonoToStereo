@@ -20,6 +20,12 @@ public:
     MonoToStereoAudioProcessorEditor (MonoToStereoAudioProcessor&, juce::AudioProcessorValueTreeState&);
     ~MonoToStereoAudioProcessorEditor() override;
 
+	static const int N_SLIDERS_COUNT = 2;
+	static const int SCALE = 70;
+	static const int LABEL_OFFSET = 25;
+	static const int SLIDER_WIDTH = 200;
+	static const int HUE = 40;
+
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
@@ -27,14 +33,13 @@ public:
 	typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
     MonoToStereoAudioProcessor& audioProcessor;
 
 	juce::AudioProcessorValueTreeState& valueTreeState;
 
 	juce::Label delayLabel;
 	juce::Label mixLabel;
+
 	juce::Slider delaySlider;
 	juce::Slider mixSlider;
 
